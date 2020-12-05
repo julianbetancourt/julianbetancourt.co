@@ -1,5 +1,6 @@
 import Head from "next/head"
 import styled from "styled-components"
+import { Toggle } from "../components/Toggle"
 
 const Container = styled.div`
   height: 100vh;
@@ -7,14 +8,17 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #252829;
+  background: ${(p) => p.theme.body};
+  transition: all 0.3s ease-in-out;
   font-family: "Space Mono", monospace;
 `
 
 const Card = styled.div`
   padding: 80px;
   width: 920px;
-  background: #252829;
+  background: ${(p) => p.theme.body};
+  transition: all 0.3s ease-in-out;
+
   display: flex;
   border-radius: 15px;
   position: relative;
@@ -30,6 +34,13 @@ const Card = styled.div`
     }
   }
 
+  .border {
+    &::before,
+    &::after {
+      background: ${(p) => p.theme.border};
+    }
+  }
+
   .top-left {
     &::before {
       content: "";
@@ -39,7 +50,6 @@ const Card = styled.div`
       position: absolute;
       height: 50px;
       width: 5px;
-      background: white;
     }
 
     &::after {
@@ -50,7 +60,6 @@ const Card = styled.div`
       position: absolute;
       height: 5px;
       width: 50px;
-      background: white;
     }
   }
 
@@ -63,7 +72,6 @@ const Card = styled.div`
       position: absolute;
       height: 50px;
       width: 5px;
-      background: white;
     }
 
     &::after {
@@ -74,7 +82,6 @@ const Card = styled.div`
       position: absolute;
       height: 5px;
       width: 50px;
-      background: white;
     }
   }
 
@@ -87,7 +94,6 @@ const Card = styled.div`
       position: absolute;
       height: 50px;
       width: 5px;
-      background: white;
     }
 
     &::after {
@@ -98,7 +104,6 @@ const Card = styled.div`
       position: absolute;
       height: 5px;
       width: 50px;
-      background: white;
     }
   }
 
@@ -111,7 +116,6 @@ const Card = styled.div`
       position: absolute;
       height: 50px;
       width: 5px;
-      background: white;
     }
 
     &::after {
@@ -122,7 +126,6 @@ const Card = styled.div`
       position: absolute;
       height: 5px;
       width: 50px;
-      background: white;
     }
   }
 `
@@ -170,7 +173,7 @@ const Title = styled.div`
     h1 {
       top: 0px;
       left: 0px;
-      color: #c8ac48;
+      color: ${(p) => p.theme.title.color1};
       display: block;
       font-size: 2rem !important;
       /* position: relative; */
@@ -179,21 +182,21 @@ const Title = styled.div`
     h1:nth-child(2) {
       top: 0;
       left: 3px !important;
-      color: #df6b3c;
+      color: ${(p) => p.theme.title.color2};
       position: absolute;
     }
 
     h1:nth-child(3) {
       top: 3px !important;
       left: 0px;
-      color: #5399d7;
+      color: ${(p) => p.theme.title.color3};
       position: absolute;
     }
 
     h1:nth-child(4) {
       top: -3px !important;
       left: 0px;
-      color: white;
+      color: ${(p) => p.theme.title.color4};
       position: absolute;
     }
   }
@@ -203,7 +206,7 @@ const Title = styled.div`
     h1 {
       top: 0px;
       left: 0px;
-      color: #c8ac48;
+      color: ${(p) => p.theme.title.color1};
       display: block;
       font-size: 4rem;
       position: relative;
@@ -212,44 +215,47 @@ const Title = styled.div`
     h1:nth-child(2) {
       top: 0;
       left: 5px;
-      color: #df6b3c;
+      color: ${(p) => p.theme.title.color2};
       position: absolute;
     }
 
     h1:nth-child(3) {
       top: 5px;
       left: 0px;
-      color: #5399d7;
+      color: ${(p) => p.theme.title.color3};
       position: absolute;
     }
 
     h1:nth-child(4) {
       top: -5px;
       left: 0px;
-      color: white;
+      color: ${(p) => p.theme.title.color4};
       position: absolute;
     }
   }
 
   h3 {
-    color: #81919c;
+    color: ${(p) => p.theme.text};
     margin: 0;
   }
 `
-const Menu = styled.div`
-  color: #81919c;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-  span {
-    margin-bottom: 10px;
-  }
 
-  @media (max-width: 485px) {
-    height: auto;
-    margin-bottom: 40px;
+const Menu = styled.div`
+  color: ${(p) => p.theme.text};
+  /* height: 100%; */
+  .menu-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    span {
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 485px) {
+      height: auto;
+      margin-bottom: 40px;
+    }
   }
 `
 
@@ -291,9 +297,12 @@ export default function Home() {
           <h3>Fullstack JavaScript Developer</h3>
         </Title>
         <Menu>
-          <span>Home</span>
-          <span>About</span>
-          <span>Blog</span>
+          <div className="menu-links">
+            <span>Home</span>
+            <span>About</span>
+            <span>Blog</span>
+          </div>
+
           {/* <span>4</span> */}
         </Menu>
       </Card>
