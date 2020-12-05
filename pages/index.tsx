@@ -162,6 +162,7 @@ const Title = styled.div`
   }
 
   @media (max-width: 485px) {
+    margin-bottom: 300px;
     .name {
       /* display: flex; */
       margin: 0 auto;
