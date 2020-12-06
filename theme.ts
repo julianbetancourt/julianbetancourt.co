@@ -9,7 +9,8 @@ const colors = {
 export const darkTheme: DarkTheme = {
   body: "#252829",
   border: "#fff",
-  text: "#81919c",
+  text1: "#81919c",
+  text2: "#fff",
   title: {
     color1: "#c8ac48",
     color2: "#df6b3c",
@@ -28,7 +29,8 @@ export const darkTheme: DarkTheme = {
 export const lightTheme: LightTheme = {
   body: "#fff",
   border: "#252829",
-  text: "#81919c",
+  text1: "#81919c",
+  text2: "#81919c",
   title: {
     color1: "#df6b3c",
     color2: "#df6b3c",

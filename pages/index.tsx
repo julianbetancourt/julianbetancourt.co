@@ -1,6 +1,7 @@
 import Head from "next/head"
 import styled from "styled-components"
-import { Toggle } from "../components/Toggle"
+import Link from "next/link"
+import { getAllPosts } from "../lib/api"
 
 const Container = styled.div`
   height: 100vh;
@@ -8,9 +9,7 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: ${(p) => p.theme.body};
   transition: all 0.3s ease-in-out;
-  font-family: "Space Mono", monospace;
 `
 
 const Card = styled.div`
@@ -18,7 +17,8 @@ const Card = styled.div`
   width: 920px;
   background: ${(p) => p.theme.body};
   transition: all 0.3s ease-in-out;
-
+  margin-bottom: auto;
+  margin-top: 50px;
   display: flex;
   border-radius: 15px;
   position: relative;
@@ -26,6 +26,7 @@ const Card = styled.div`
   @media (max-width: 1127px) {
     flex-direction: column-reverse;
     padding: 0px;
+    width: 600px;
   }
 
   @media (max-width: 485px) {
@@ -138,6 +139,7 @@ const Photo = styled.div`
   background: url("/img.jpg") no-repeat;
   background-position: center;
   background-size: 120%;
+  align-self: center;
 
   @media (max-width: 1127px) {
     display: none;
@@ -150,11 +152,17 @@ const Photo = styled.div`
 
 const Title = styled.div`
   display: flex;
+  max-width: 390px;
   flex-direction: column;
   margin-right: 80px;
   margin-top: auto;
   width: auto;
-  font-family: "Space Mono", monospace;
+  p {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    line-height: 1.2rem;
+    color: ${(p) => p.theme.text1};
+  }
   @media (max-width: 1127px) {
     margin-right: 0;
     margin: 0 auto;
@@ -166,6 +174,9 @@ const Title = styled.div`
 
   @media (max-width: 485px) {
     margin-bottom: 300px;
+    margin-left: 20px;
+    margin-right: 20px;
+    /* text-align: center; */
     .name {
       /* display: flex; */
       margin: 0 auto;
@@ -235,21 +246,20 @@ const Title = styled.div`
   }
 
   h3 {
-    color: ${(p) => p.theme.text};
+    color: ${(p) => p.theme.text1};
     margin: 0;
   }
 `
 
 const Menu = styled.div`
-  color: ${(p) => p.theme.text};
-  /* height: 100%; */
   .menu-links {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    span {
+    a {
       margin-bottom: 10px;
+      color: inherit;
     }
 
     @media (max-width: 485px) {
@@ -295,12 +305,25 @@ export default function Home() {
             </h1>
           </div>
           <h3>Fullstack JavaScript Developer</h3>
+          <p>
+            I'm an Amsterdam-based <span></span>Software Engineer specializing
+            in React, TypeScript and Node. I currently work for{" "}
+            <a href="https://messagebird.com" target="_blank">
+              Messagebird
+            </a>{" "}
+            as a Frontend Engineer. In the past I also worked for the
+            Dubai-based startup{" "}
+            <a href="https://quiqup.com" target="_blank">
+              Quiqup
+            </a>{" "}
+            writing all things JS.
+          </p>
         </Title>
         <Menu>
           <div className="menu-links">
-            <span>Home</span>
-            <span>About</span>
-            <span>Blog</span>
+            <Link href="/">Home</Link>
+            <Link href="/blog">Blog</Link>
+            <Link href="/blog">Contact</Link>
           </div>
 
           {/* <span>4</span> */}

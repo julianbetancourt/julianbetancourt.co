@@ -1,0 +1,550 @@
+---
+slug: 'application-state-management-with-react'
+title: 'Manejo de estados en React'
+date: '2020-07-21'
+author: 'Kent C. Dodds'
+description: '_Cómo React es todo lo que necesitas para manejar tus estados_'
+categories:
+  - 'react'
+keywords:
+  - 'react'
+  - 'state'
+  - 'javascript'
+  - 'redux'
+  - 'mobx'
+  - 'recoil'
+  - 'react query'
+  - 'jotai'
+banner: 'https://images.unsplash.com/photo-1513346940221-6f673d962e97?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80'
+bannerCredit: 'Photo by [Rene Böhmer](https://unsplash.com/photos/YeUVDKZWSZ4)'
+---
+
+Disclaimer: Encuentra el artículo original en el [Blog de Kent](https://kentcdodds.com/blog/application-state-management-with-react)
+
+Manejar los estados es posiblemente la parte más difícil de cualquier aplicación. Es por eso que 
+hay tantas librerias de manejo de estado disponibles y nuevas por venir todos los días
+(incluso algunas están construidas con base en otras ya existentes...
+Hay cientos de abstracciones para hacer "redux más fácil" en npm). A pesar de que el manejo de estados
+es un problema difícil, yo diría que una de las cosas que lo hace tan complicado es que
+muchas veces le ponemos más ingeniería de lo que realmente necesita el problema.
+
+Hay una solución de manejo de estados que personalmente he tratado de implementar
+por todo el tiempo que he usado React, y con el lanzamiento de React hooks (y
+mejoras significativas a React context) este método de manejar estados
+ha sido drasticamente simplificado.
+
+Muchas veces nos referimos a los componentes de React como piezas de Lego para 
+construir nuestras aplicaciones, y pienso que cuando la gente escucha esto, de alguna
+manera piensa que esto excluye el estado. El "secreto" detrás de mi solución personal
+al problema de manejar estados es pensar en cómo el estado de tu aplicación "mapea" 
+el árbol (tree structure) de la misma.
+
+Una de las razones por la que redux fue tan popular es que react-redux solucionó
+el problema de [_prop drilling_](https://kentcdodds.com/blog/prop-drilling/)*1*. El hecho
+de que pudieras compartir datos a través de diferentes partes de tu árbol solo usando
+una función mágica llamada `connect` era maravilloso. Su uso de reducers/actions/creators/etc.
+también era genial, pero estoy convencido de que la obicuidad de redux es porque
+le solucionó el problema de _prop drilliging_ a los desarrolladores.
+
+Esta es la razón por la que solo usé redux en un proyecto: consistentemente veo
+desarrolladores poniendo _todo_ su estado en redux. No solo estado de aplicación global,
+sino estado local también. Esto conlleva a muchos problemas; por ejemplo que cuando estás
+manteniendo cualquier estado de intereacción, significa que debes interactuar con reducers,
+creadores de acción/tipos (action creators/types) y ejecutar funciones `dispatch`, que
+últimamente resulta en tener que abrir muchos archivos y rastrear el código en tu cabeza
+para averigüar qué está pasando y qué impacto está teniendo en el resto del _codebase_.
+
+Para ser claro, esto está bien para estados verdaderamente globales, pero para estados simples
+(como _trackear_ que un modal está abierto o no ó el estado del valor de un input) esto es un gran 
+problema. Para empeorar las cosas, no escala muy bien. Entre más grande sea tu aplicación,
+más problemas traerá. Por supuesto que puedes conectar diferentes _reducers_ para 
+manejar diferentes partes de tu aplicación, pero la indirección de ir por todos estos
+creadores de acciones y _reducers_ no es óptimo.
+
+Tener todo el estado de tu aplicación en un solo objecto también puede llevar a otros 
+problemas, incluso si no estás usando Redux. En React, cuando un `<Context.Provider>` obtiene
+un nueve valor, todos los componentes que consumen ese valor son actualizados y tienen que ir por 
+un nuevo _render_, incluso si es un _function component_ que solo concierne partes de tus datos.
+Eso puede, potencialmente, llevar a problemas de rendimiento. (React-redux v6 también intentó este
+mecanismo hasta que se dieron cuanta que no serviría bien con _hooks_, lo que los forzó
+a usar otro mecanismo en la v7). Pero mi punto es que no tienes este problema si tienes
+tu estado separado de forma más lógica y localizada en el árbol de react (_react tree_) más
+cercano a donde importa.
+
+---
+
+Esta es la cuestión, si estás construyendo una app con React, ya tienes una libreria
+de manejo de estados instalada en tu aplicación. Ni siquiera tienes que instalarla por `npm`
+o `yarn`. No cuesta bytes de más para tus usuarios, se integra con todos los paquetes
+de React en npm, y está bien documentada por el equipo de React. Es React en sí mismo.
+
+> **React es una libreria de manejo de estados**
+
+Cuando construyes una aplicación con React, estás montando un montón de de componentes
+para formar un árbol de componentes empezando en tu `<App />` y finalizando en tus
+`<input />`s, `<div />`s y `<button />`s. No manejas todos los elementos _low-level_ que 
+tu aplicación renderiza en un solo lugar. En cambio, dejas que cada componente 
+individualmente maneje eso y resulta siendo una manera muy efectiva de construir tu UI. Puedes
+hacer esto con el estado también, y es muy probable que ya lo hagas hoy:
+
+```jsx {2}
+function Counter() {
+  const [count, setCount] = React.useState(0)
+  const increment = () => setCount(c => c + 1)
+  return <button onClick={increment}>{count}</button>
+}
+
+function App() {
+  return <Counter />
+}
+```
+
+[![Edit React Codesandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/4qzj73lozx?fontsize=14&hidenavigation=1&module=%2Fsrc%2F01-simple-count.js&moduleview=1)
+
+Todo lo que estoy discutiendo aquí también funciona con _class components_. Los hooks 
+solo hacen las cosas algo más fácil (especialmente _Context_, de lo que ya hablaremos en un minuto)
+
+```jsx {2}
+class Counter extends React.Component {
+  state = {count: 0}
+  increment = () => this.setState(({count}) => ({count: count + 1}))
+  render() {
+    return <button onClick={this.increment}>{this.state.count}</button>
+  }
+}
+```
+
+"Ok, Kent, un solo elemento de estado manejado en un componente es fácil, pero qué hago cuando
+necesito compartir estado a través de componentes?
+Por ejemplo, qué pasa si quisera hacer esto:"
+
+```jsx {3}
+function CountDisplay() {
+  // de dónde viene `count` ?
+  return <div>El contador acutal es {count}</div>
+}
+
+function App() {
+  return (
+    <div>
+      <CountDisplay />
+      <Counter />
+    </div>
+  )
+}
+```
+
+"El `count` se maneja dentro de `<Counter />`, ahora necesito una libreria de manejo de estados
+para acceder a ese `count` desde `<CountDisplay />` y actualizarlo en `<Counter />`!"
+
+La solución a este problema es tan viejo como Rect mismo (más viejo?) y ha estado
+en la documentación desde que puedo recordar:
+[Levantando el estado](https://es.reactjs.org/docs/lifting-state-up.html)
+
+"Levantar el estado" es legítimamente la respuesta al problema de manejo de estados
+en React y es muy sólida. Aquí es cómo lo aplicarías en esta situación:
+
+
+```jsx
+function Counter({count, onIncrementClick}) {
+  return <button onClick={onIncrementClick}>{count}</button>
+}
+
+function CountDisplay({count}) {
+  return <div>El contador acutal es {count}</div>
+}
+
+function App() {
+  const [count, setCount] = React.useState(0)
+  const increment = () => setCount(c => c + 1)
+  return (
+    <div>
+      <CountDisplay count={count} />
+      <Counter count={count} onIncrementClick={increment} />
+    </div>
+  )
+}
+```
+
+[![Edit React Codesandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/4qzj73lozx?fontsize=14&hidenavigation=1&module=%2Fsrc%2F02-lift-state.js&moduleview=1)
+
+Solo cambiamos quién es el responsable de nuestro estado y es muy sencillo. Y podríamos seguir
+"levantando el estado" hasta lo más alto de nuestra aplicación.
+
+"Ok Kent, pero qué sobre el problema de [prop drilling](https://kentcdodds.com/blog/prop-drilling/)?"
+
+Gran pregunta. Tu primera línea de defensa en contra de esto es tener que cambiar
+la manera en que estructuras tus componentes. Úsa la [composición de componentes](https://es.reactjs.org/docs/context.html#before-you-use-context) (component composition).
+Tal vez en vez de: 
+
+```jsx
+function App() {
+  const [someState, setSomeState] = React.useState('some state')
+  return (
+    <>
+      <Header someState={someState} onStateChange={setSomeState} />
+      <LeftNav someState={someState} onStateChange={setSomeState} />
+      <MainContent someState={someState} onStateChange={setSomeState} />
+    </>
+  )
+}
+```
+
+Podrías hacer esto en cambio:
+
+```jsx
+function App() {
+  const [someState, setSomeState] = React.useState('some state')
+  return (
+    <>
+      <Header
+        logo={<Logo someState={someState} />}
+        settings={<Settings onStateChange={setSomeState} />}
+      />
+      <LeftNav>
+        <SomeLink someState={someState} />
+        <SomeOtherLink someState={someState} />
+        <Etc someState={someState} />
+      </LeftNav>
+      <MainContent>
+        <SomeSensibleComponent someState={someState} />
+        <AndSoOn someState={someState} />
+      </MainContent>
+    </>
+  )
+}
+```
+
+Si ésto no es muy claro, [Michael Jackson](https://twitter.com/mjackson) tiene 
+[un gran vídeo](https://www.youtube.com/watch?v=3XaXKiXtNjw) que puedes ver para
+ayudar a aclarar lo que digo
+
+Sin embargo, envetualmente, incluso la composición no podrá con todo, así que que tu
+próximo paso es ir al `Context` de React. De hecho, esto ha sido una "solución" por un
+largo tiempo, pero por un buen tiempo esta solución era "no oficial". Como dije,
+muchas personas buscaron `react-redux` porque solucionó este problema usando el 
+mecanismo al que me estoy refiriendo sin tener que preocuparse de la advertencia
+que estaba en la documentación de React. Pero ahora que `context` es una parte oficialmente
+soportada por React, podemos usarlo directamente sin ningún problema:
+
+```jsx
+// src/count/count-context.js
+import * as React from 'react'
+
+const CountContext = React.createContext()
+
+function useCount() {
+  const context = React.useContext(CountContext)
+  if (!context) {
+    throw new Error(`useCount must be used within a CountProvider`)
+  }
+  return context
+}
+
+function CountProvider(props) {
+  const [count, setCount] = React.useState(0)
+  const value = React.useMemo(() => [count, setCount], [count])
+  return <CountContext.Provider value={value} {...props} />
+}
+
+export {CountProvider, useCount}
+
+// src/count/page.js
+import * as React from 'react'
+import {CountProvider, useCount} from './count-context'
+
+function Counter() {
+  const [count, setCount] = useCount()
+  const increment = () => setCount(c => c + 1)
+  return <button onClick={increment}>{count}</button>
+}
+
+function CountDisplay() {
+  const [count] = useCount()
+  return <div>El contador actual es {count}</div>
+}
+
+function CountPage() {
+  return (
+    <div>
+      <CountProvider>
+        <CountDisplay />
+        <Counter />
+      </CountProvider>
+    </div>
+  )
+}
+```
+
+[![Edit React Codesandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/4qzj73lozx?fontsize=14&hidenavigation=1&module=%2Fsrc%2F03-context.js&moduleview=1)
+
+> NOTA: Este ejemplo en particular esta DEMASIADO simplificado y NO recomendaría
+> que uses `context` para solucionar este escenario en específico. Por favor lee
+> [Prop Drilling](https://kentcdodds.com/blog/prop-drilling/) para tener una mejor noción de por qué
+> _prop drilling_ no es necesariamente un problema y es frecuentemente desado. No vayas a 
+> `context` muy rápido!
+
+Y lo que es _cool_ de este método es que podríamos poner toda la lógica para
+diferentes formas de actualizar el estado en nuestro hook `useCount`: 
+
+```jsx
+function useCount() {
+  const context = React.useContext(CountContext)
+  if (!context) {
+    throw new Error(`useCount must be used within a CountProvider`)
+  }
+  const [count, setCount] = context
+
+  const increment = () => setCount(c => c + 1)
+  return {
+    count,
+    setCount,
+    increment,
+  }
+}
+```
+
+[![Edit React Codesandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/4qzj73lozx?fontsize=14&hidenavigation=1&module=%2Fsrc%2F04-context-with-logic.js&moduleview=1)
+
+Y podrías fácilmente cambiar esto a `useReducer` en vez de `useState` también:
+
+```jsx
+function countReducer(state, action) {
+  switch (action.type) {
+    case 'INCREMENT': {
+      return {count: state.count + 1}
+    }
+    default: {
+      throw new Error(`Unsupported action type: ${action.type}`)
+    }
+  }
+}
+
+function CountProvider(props) {
+  const [state, dispatch] = React.useReducer(countReducer, {count: 0})
+  const value = React.useMemo(() => [state, dispatch], [state])
+  return <CountContext.Provider value={value} {...props} />
+}
+
+function useCount() {
+  const context = React.useContext(CountContext)
+  if (!context) {
+    throw new Error(`useCount must be used within a CountProvider`)
+  }
+  const [state, dispatch] = context
+
+  const increment = () => dispatch({type: 'INCREMENT'})
+  return {
+    state,
+    dispatch,
+    increment,
+  }
+}
+```
+
+[![Edit React Codesandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/4qzj73lozx?fontsize=14&hidenavigation=1&module=%2Fsrc%2F05-context-with-reducer.js&moduleview=1)
+
+Esto te da una inmensa cantidad de flexibilidad y reduce la complejidad en órdenes
+de magnitud. Aquí hay un par de puntos importantes para recordad cuando hagas las cosas
+de esta manera:
+
+1. No todo en tu aplicación necesita estar en un solo objeto de estado. Mantén las
+   cosas separadas lógicamente (la configuración de usuario no necesariamente tiene que
+   estar en el mismo contexto que las notificaciones). Tendrás múltiples proveedores (_providers_)
+   con este método.
+2. No todo tu `Context` necesita ser globalmente accesible! **Mantén el estado
+   tan cerca a dónde se necesite como sea posible.**
+
+Más de ese segundo punto. Tu árbol de estado podría verse algo así:
+
+```jsx
+function App() {
+  return (
+    <ThemeProvider>
+      <AuthenticationProvider>
+        <Router>
+          <Home path="/" />
+          <About path="/about" />
+          <UserPage path="/:userId" />
+          <UserSettings path="/settings" />
+          <Notifications path="/notifications" />
+        </Router>
+      </AuthenticationProvider>
+    </ThemeProvider>
+  )
+}
+
+function Notifications() {
+  return (
+    <NotificationsProvider>
+      <NotificationsTab />
+      <NotificationsTypeList />
+      <NotificationsList />
+    </NotificationsProvider>
+  )
+}
+
+function UserPage({username}) {
+  return (
+    <UserProvider username={username}>
+      <UserInfo />
+      <UserNav />
+      <UserActivity />
+    </UserProvider>
+  )
+}
+
+function UserSettings() {
+  // este sería el hook asociado para el AuthenticationProvider
+  const {user} = useAuthenticatedUser()
+}
+```
+
+Notice that each page can have its own provider that has data necessary for the
+components underneath it. Code splitting "just works" for this stuff as well.
+How you get data _into_ each provider is up to the hooks those providers use and
+how you retrieve data in your application, but you know just where to start
+looking to find out how that works (in the provider).
+
+Nota que cada página puede tener su propio proveedor (_provider_) que tiene los datos necesarios
+para los componentes debajo de él. _Code splitting_ "funciona y ya" para todo esto también.
+Cómo pones datos _dentro_ de cada proveedor es responsabilidad de los hooks que esos proveedores
+usan y cómo consigues datos en tu aplicación, pero sabes dónde empezar a mirar
+para saber cómo funciona (en el proveedor).
+
+**For even more about why this colocation is beneficial, check out my
+["State Colocation will make your React app faster"](/blog/state-colocation-will-make-your-react-app-faster)
+and ["Colocation"](/blog/colocation) blog posts. And for more about context,
+read
+[How to use React Context effectively](/blog/how-to-use-react-context-effectively)**
+**Para incluso más información acerca de por qué esta colocación es benéfica, revisa mis blogs
+["State Colocation will make your React app faster"](https://kentcdodds.com/blog/state-colocation-will-make-your-react-app-faster)
+and ["Colocation"](https://kentcdodds.com/blog/colocation). Y para más información de `context`,
+lee
+[How to use React Context effectively](https://kentcdodds.com/blog/how-to-use-react-context-effectively)**
+
+## Server Cache vs UI State
+
+Una cosa más que quiero añadir. Hay varias categorías de estado, pero cada
+tipo de estado puede caer en alguno de estos:
+
+1. Cache de servidor - Estado que en realidad es almacenado en el servidor y lo almacenamos
+   en el cliente para acceso rápido (como datos de usuario)
+2. Estado UI - Estado que solo es útil en el UI para controlar la interactividad de la app (
+   como un `isOpen` de un modal)
+
+Cometemos un error cuando combinamos los dos. El cache de servidor tiene inherentemente 
+diferentes problemas al estado de UI y por lo tanto necesita ser manejado diferente. Si
+aceptas la idea de que lo que tienes en realidad no es estado sino cache de servidor, entonces
+puedes empezar a pensarlo de manera correcta y por tanto manejarlo mejor.
+
+Definitivamente puedes manejar esto tú mismo con tu propio `useState` o `useReducer` 
+con el `useContext` correcto en algunos lugares. Pero déjame decir que el _caching_
+es un problema verdaderamente difícil (algunos dicen que es uno de los problemas más
+difíciles en ciencias de la computación) y sería sabio pararte sobre los hombres
+de gigantes en esta ocasión.
+
+Es por eso que recomiendo usar [react-query](https://github.com/tannerlinsley/react-query) para 
+este tipo de estado. Yo sé, yo sé, te dije que no necesitabas una libreria para manejar estados,
+pero realmente no considero react-query una libreria de manejo de estados. La considero un cache. Y 
+una muy buena. Dále una mirada! Ese [Tanner Linsley](https://twitter.com/tannerlinsley) es inteligente.
+
+## Y el rendimiento?
+
+Cuando sigues los consejos de arriba, el rendimiento raramente va a ser un problema. Particularmente
+cuando estás siguiendo las [recomendaciones de colocación](https://kentcdodds.com/blog/state-colocation-will-make-your-react-app-faster). Sin embargo, definitivamente hay casos en los que
+el rendimiento puede ser problematico. Cuando tienes problemas de rendimiento relacionados al estado,
+lo primero es revisar cuántos componentes están siendo re-renderizados a causa de un cambio 
+de estado y determinar si esos componentes realmente necesitan ser re-renderizados a causa de
+ese cambio de estado. Si sí necesitan ser re-renderizados, entonces el problema de rendimiento no está
+en tu mecanismo para manejar estados, sino en la velocidad de tu render, en ese caso necesitas
+[acelerar tus renders](https://kentcdodds.com/blog/blog/fix-the-slow-render-before-you-fix-the-re-render).
+
+Sin embargo, si notas que hay muchos componentes que están siendo renderizados sin 
+ningúna actualización en el DOM o necesitaban efectos-secundarios (_side-effects_), 
+entonces esos componentes están siendo renderizados innecesariamente. Esto pasa todo el tiempo
+en React y normalmente no es un problema (y deberías [concentrarte en hacer rápdido re-renders innecesarios primero](https://kentcdodds.com/blog/blog/fix-the-slow-render-before-you-fix-the-re-render)),
+pero si de verdad es la raíz del problema, entonces aquí hay unos enfoques para resolver
+los problemas de rendimiento con React context:
+
+1. Separa tu estado en diferentes pieza lógicas en vez de un _store_ grande, así, una 
+   sola actualización a cualquier parte de tu estado NO dispara una actualización para
+   cada componente en tu app.
+2. [Optimiza tu _context provider_](https://kentcdodds.com/blog/how-to-use-react-context-effectively)
+3. Usa [jotai](https://github.com/react-spring/jotai)
+
+Vamos de nuevo, otra recomendación de libreria. Es verdad, hay _algunos_ casos para los que
+el manejo de estados interno de React no queda bien. De todas las abstracciones disponibles, jotai
+es la más promisoria para esos casos. Si tienes curiosidad de cuáles son esos casos, los tipos de
+problemas que jotai resuleve están muy bien descritos en [Recoil: State Management for Today's React - Dave McCabe aka @mcc_abe at @ReactEurope 2020](https://www.youtube.com/watch?v=_ISAA_Jt9kI).
+Recoil y jotai son muy similares (y resuelven el mismo tipo de problemas). Pero basado en mi (limitada) 
+experiencia con ellos, prefiero jotai.
+
+En cualquier caso, la _mayoría_ de las aplicaciones no necesitarán una libreria de manejo de
+estado atómico como recoil o jotai.
+
+## Conclusión
+
+Again, this is something that you can do with class components (you don't have
+to use hooks). Hooks make this much easier, but you could implement this
+philosophy with React 15 no problem. Keep state as local as possible and use
+context only when prop drilling really becomes a problem. Doing things this way
+will make it easier for you to maintain state interactions.
+
+De nuevo, esto es algo que puedes hacer con _clas components_ (no tienes que usar hooks).
+Los hooks hacen esto más fácil, pero podrías implementar la misma filosofía con React 15 
+sin problemas. Mantén el estado tan local como sea posible y usa `context` solo cuando _prop drilling_ 
+en verdad se convierta en un problema. Hacer las cosas así, hará más fácil el
+mantenimiento de estados de interacción.
+
+
+<!-- ----
+Notas del traductor:
+
+1. Prop drilling. Pasar un prop a través de una jerarquía de componentes con el único
+fin (o no) de seguirlo pasando a componentes hijos. Imagínate el siguiente árbol de componentes:
+
+```jsx
+<App>
+  <Content>
+    <SubContent>
+      <SideBar>
+        <p>Lorem ipsum</p>
+      <SideBar>
+    </SubContent>
+  </Content>
+</App>
+```
+
+Imagina que `App` tiene un estado llamado `theme` y debe ser pasado via props hasta `p`. 
+Nuestra aplicación se vería así:
+
+```jsx
+// App.js
+function App() {
+  const [theme, setTheme] = React.useState([{ mainColor: blue }])
+  return <Content theme={theme}>
+}
+
+// Content.js
+function Content() {
+  return <SubContent theme={props.theme}>
+}
+...
+
+SubContent.js
+...
+<SubContent theme={props.theme}>
+
+SideBar.js
+...
+<p color={props.theme.mainColor}>
+
+Como ves, tuvimos que pasar el prop `theme` a través de varios componentes, incluso si ellos
+mismos no lo usaban. Por ejemplo, `SubContent` no usa `theme` para nada, sin embargo, debimos declararlo
+como prop con el único fin de pasarlo a otros componentes dentro de su jerarquía.
+
+A esto se le conoce como "prop drilling". -->
+
+
+    

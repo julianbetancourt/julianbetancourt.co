@@ -4,7 +4,8 @@ declare module "styled-components" {
   interface Base {
     body: string
     border: string
-    text: string
+    text1: string
+    text2: string
     title: {
       color1: string
       color2: string
