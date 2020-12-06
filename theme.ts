@@ -30,7 +30,7 @@ export const lightTheme: LightTheme = {
   body: "#fff",
   border: "#252829",
   text1: "#81919c",
-  text2: "#81919c",
+  text2: "hsl(222deg, 22%, 5%)",
   title: {
     color1: "#df6b3c",
     color2: "#df6b3c",

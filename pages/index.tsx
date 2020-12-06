@@ -277,13 +277,7 @@ export default function Home() {
         <div className="border top-right"></div>
         <div className="border bottom-left"></div>
         <div className="border bottom-right"></div>
-        <Head>
-          <link rel="preconnect" href="https://fonts.gstatic.com" />
-          <link
-            href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@700&family=Space+Mono&display=swap"
-            rel="stylesheet"
-          />
-        </Head>
+
         <Photo></Photo>
         <Title>
           <div className="name">

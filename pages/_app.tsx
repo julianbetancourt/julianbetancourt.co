@@ -1,3 +1,4 @@
+import Head from "next/head"
 import { useState, useEffect } from "react"
 import { createGlobalStyle, ThemeProvider } from "styled-components"
 import { Normalize } from "styled-normalize"
@@ -9,7 +10,7 @@ const GlobalStyle = createGlobalStyle`
   body {
     background: ${(p) => p.theme.body};
     color: ${(p) => p.theme.text1};
-    font-family: "Space Mono", monospace;
+    font-family: "Source Code Pro", "Space Mono", monospace;
 
   }
   a {
@@ -39,6 +40,14 @@ export default function App({ Component, pageProps }) {
 
   return (
     <>
+      <Head>
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300;400;500&family=Space+Mono&display=swap"
+          rel="stylesheet"
+        />
+      </Head>
       <Normalize />
       <ThemeProvider theme={currentTheme === "light" ? lightTheme : darkTheme}>
         <Component {...pageProps} />

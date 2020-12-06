@@ -5,7 +5,7 @@ import { getAllPosts, getPostBySlug } from "../../lib/api"
 import markdownToHtml from "../../lib/markdownToHtml"
 
 const Container = styled.div`
-  height: 100vh;
+  /* height: 100vh; */
   max-width: 920px;
   margin: 50px auto 0;
   /* display: flex;
@@ -17,6 +17,19 @@ const Container = styled.div`
   h1 {
     font-size: 2.3rem;
     color: ${(p) => p.theme.text2};
+  }
+
+  p {
+    color: ${(p) => p.theme.text2};
+    font-size: 19px;
+    margin: 32px 0;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  @media (max-width: 920px) {
+    max-width: 100%;
+    margin: 0 50px;
   }
 `
 
