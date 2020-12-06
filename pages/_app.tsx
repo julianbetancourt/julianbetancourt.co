@@ -47,6 +47,21 @@ export default function App({ Component, pageProps }) {
           href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300;400;500&family=Space+Mono&display=swap"
           rel="stylesheet"
         />
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-3GKQZHTHLQ"
+        />
+
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-3GKQZHTHLQ');
+        `,
+          }}
+        />
       </Head>
       <Normalize />
       <ThemeProvider theme={currentTheme === "light" ? lightTheme : darkTheme}>
