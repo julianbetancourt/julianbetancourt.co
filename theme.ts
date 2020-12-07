@@ -33,7 +33,7 @@ export const darkTheme: DarkTheme = {
 export const lightTheme: LightTheme = {
   body: "#fff",
   border: "#252829",
-  text1: "#81919c",
+  text1: "#0a0c10",
   text2: "hsl(222deg, 22%, 5%)",
   textLink: colors.orange[500],
   title: {

@@ -13,7 +13,7 @@ import markdownToHtml from "../lib/markdownToHtml"
 
 const Container = styled.div`
   height: 100vh;
-  max-width: 100%;
+  /* max-width: 100%; */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,7 +21,7 @@ const Container = styled.div`
 `
 
 const Card = styled.div`
-  width: 1096px;
+  max-width: 1096px;
   margin-bottom: auto;
   margin-top: 50px;
   & > .bio {
@@ -45,12 +45,20 @@ const Card = styled.div`
   @media (max-width: 1127px) {
     flex-direction: column-reverse;
     padding: 0px;
-    width: 600px;
+    max-width: 600px;
+  }
+
+  @media (max-width: 685px) {
+    max-width: 100%;
+    .border {
+      display: none;
+    }
   }
 
   @media (max-width: 485px) {
-    .border {
-      display: none;
+    & > .bio,
+    & > .posts {
+      padding: 20px;
     }
   }
 
@@ -192,10 +200,14 @@ const Title = styled.div`
     h2 {
       text-align: center;
     }
+
+    h1:nth-child(1) {
+      opacity: 0;
+    }
   }
 
   @media (max-width: 485px) {
-    margin-bottom: 300px;
+    /* margin-bottom: 300px; */
     margin-left: 20px;
     margin-right: 20px;
     /* text-align: center; */
