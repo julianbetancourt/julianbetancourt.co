@@ -4,13 +4,17 @@ const colors = {
   grey: {
     500: "#252829",
   },
+  orange: {
+    500: "#df6b3c",
+  },
 }
 
 export const darkTheme: DarkTheme = {
-  body: "#252829",
+  body: "#0e141b",
   border: "#fff",
-  text1: "#81919c",
+  text1: "#fff",
   text2: "#fff",
+  textLink: colors.orange[500],
   title: {
     color1: "#c8ac48",
     color2: "#df6b3c",
@@ -31,6 +35,7 @@ export const lightTheme: LightTheme = {
   border: "#252829",
   text1: "#81919c",
   text2: "hsl(222deg, 22%, 5%)",
+  textLink: colors.orange[500],
   title: {
     color1: "#df6b3c",
     color2: "#df6b3c",

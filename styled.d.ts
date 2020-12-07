@@ -6,6 +6,7 @@ declare module "styled-components" {
     border: string
     text1: string
     text2: string
+    textLink: string
     title: {
       color1: string
       color2: string
@@ -20,6 +21,9 @@ declare module "styled-components" {
     }
     colors: {
       grey: {
+        500: string
+      }
+      orange: {
         500: string
       }
     }

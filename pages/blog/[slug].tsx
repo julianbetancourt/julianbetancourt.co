@@ -5,60 +5,55 @@ import { getAllPosts, getPostBySlug } from "../../lib/api"
 import markdownToHtml from "../../lib/markdownToHtml"
 
 const Container = styled.div`
-  /* height: 100vh; */
   max-width: 920px;
+  width: 100%;
   margin: 50px auto 0;
-  /* display: flex;
-  disp
-  align-items: center;
-  justify-content: center; */
+  display: flex;
+  flex-direction: column;
+
+  .mdx-block {
+    width: 80%;
+  }
+
   transition: all 0.3s ease-in-out;
-  /* background: pink; */
   h1 {
     font-size: 2.3rem;
     color: ${(p) => p.theme.text2};
   }
 
-  p {
-    color: ${(p) => p.theme.text2};
-    font-size: 19px;
-    margin: 32px 0;
-    line-height: 1.6;
-    font-weight: 400;
-  }
-
-  @media (max-width: 920px) {
-    max-width: 100%;
-    margin: 0 50px;
+  @media (max-width: 960px) {
+    max-width: 100%none;
+    padding: 0 40px;
+    .mdx-block {
+      width: 100%;
+    }
   }
 `
 
 export default function Post({ post, morePosts, preview }) {
-  console.log({ post, morePosts, preview })
+  ;({ post, morePosts, preview })
   return (
     <Container>
       <Nav />
-      <div className="max-w-2xl mx-auto">
-        <h1>{post.title}</h1>
-        <div
-          // className={markdownStyles['markdown']}
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
-      </div>
+      <h1>{post.title}</h1>
+      <div
+        className="mdx-block"
+        dangerouslySetInnerHTML={{ __html: post.content }}
+      />
     </Container>
   )
 }
 
 export async function getStaticProps({ params }) {
-  console.log("params ->", params)
   const post = getPostBySlug(params.slug, ["content", "title"])
   const content = await markdownToHtml(post.content || "")
-
+  const description = await markdownToHtml(post.description || "")
   return {
     props: {
       post: {
         ...post,
         content,
+        description,
       },
     },
   }
@@ -66,11 +61,9 @@ export async function getStaticProps({ params }) {
 
 export async function getStaticPaths() {
   const posts = getAllPosts(["slug"])
-  // console.log("================", posts)
   return {
     paths: posts.map((post) => {
       return {
-        // console.log()
         params: {
           slug: post.slug,
         },

@@ -27,9 +27,7 @@ export default function Nav() {
         <Link href="/">Julian Betancourt</Link>
       </h2>
       <div className="menu-links">
-        <Link href="/">Home</Link>
-        <Link href="/blog">Blog</Link>
-        <Link href="/blog">Contact</Link>
+        <Link href="/">Blog</Link>
       </div>
     </Container>
   )

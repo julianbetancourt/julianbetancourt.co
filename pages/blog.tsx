@@ -21,7 +21,7 @@ const Container = styled.div`
 `
 
 export default function Blog({ allPosts }) {
-  console.log({ allPosts })
+  ;({ allPosts })
   return (
     <Container>
       <Nav />
