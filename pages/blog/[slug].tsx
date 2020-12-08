@@ -1,3 +1,4 @@
+import Head from "next/head"
 import React from "react"
 import styled from "styled-components"
 import Nav from "../../components/Nav"
@@ -31,9 +32,12 @@ const Container = styled.div`
 `
 
 export default function Post({ post, morePosts, preview }) {
-  ;({ post, morePosts, preview })
   return (
     <Container>
+      <Head>
+        <title>{post.title}</title>
+        <meta property="og:title" content={post.title} />
+      </Head>
       <Nav />
       <h1>{post.title}</h1>
       <div

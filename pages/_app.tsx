@@ -55,6 +55,21 @@ export default function App({ Component, pageProps }) {
   return (
     <>
       <Head>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+        <meta
+          name="description"
+          content="Julian Betancourt's Blog. Focused on React and Javascript"
+        />
+        <meta http-equiv="x-ua-compatible" content="ie=edge" />
+        <meta
+          property="og:description"
+          content="Friendly tutorials for developers. Focus on React, CSS, Animation, and more!"
+        />
+        <meta property="og:type" content="website" />
+
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap"

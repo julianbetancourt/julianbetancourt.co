@@ -299,6 +299,7 @@ export default function Home({ allPosts }) {
     <Container>
       <Head>
         <link href="https://css.gg/mail.css" rel="stylesheet" />
+        <title>Julian Betancourt | Home</title>
       </Head>
       <Card>
         <div className="bio">

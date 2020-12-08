@@ -399,12 +399,6 @@ function UserSettings() {
 }
 ```
 
-Notice that each page can have its own provider that has data necessary for the
-components underneath it. Code splitting "just works" for this stuff as well.
-How you get data _into_ each provider is up to the hooks those providers use and
-how you retrieve data in your application, but you know just where to start
-looking to find out how that works (in the provider).
-
 Nota que cada página puede tener su propio proveedor (_provider_) que tiene los datos necesarios
 para los componentes debajo de él. _Code splitting_ "funciona y ya" para todo esto también.
 Cómo pones datos _dentro_ de cada proveedor es responsabilidad de los hooks que esos proveedores
@@ -413,7 +407,7 @@ para saber cómo funciona (en el proveedor).
 
 **Para incluso más información acerca de por qué esta colocación es benéfica, revisa mis blogs
 ["State Colocation will make your React app faster"](https://kentcdodds.com/blog/state-colocation-will-make-your-react-app-faster)
-and ["Colocation"](https://kentcdodds.com/blog/colocation). Y para más información de `context`,
+y ["Colocation"](https://kentcdodds.com/blog/colocation). Y para más información de `context`,
 lee
 [How to use React Context effectively](https://kentcdodds.com/blog/how-to-use-react-context-effectively)**
 
