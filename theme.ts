@@ -15,6 +15,7 @@ export const darkTheme: DarkTheme = {
   text1: "#fff",
   text2: "#fff",
   textLink: colors.orange[500],
+  postPreview: "#b3e5ff1a",
   title: {
     color1: "#c8ac48",
     color2: "#df6b3c",
@@ -35,6 +36,7 @@ export const lightTheme: LightTheme = {
   border: "#252829",
   text1: "#0a0c10",
   text2: "hsl(222deg, 22%, 5%)",
+  postPreview: "#e2f1ff",
   textLink: colors.orange[500],
   title: {
     color1: "#df6b3c",

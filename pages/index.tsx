@@ -21,6 +21,7 @@ const Container = styled.div`
 `
 
 const Card = styled.div`
+  width: 1096px;
   max-width: 1096px;
   margin-bottom: auto;
   margin-top: 50px;
@@ -38,8 +39,11 @@ const Card = styled.div`
     justify-content: space-between;
     & > div {
       margin-bottom: 20px;
+      /* margin-right: 64px; */
       /* margin-right: 20px; */
     }
+
+    /* & */
   }
 
   @media (max-width: 1127px) {

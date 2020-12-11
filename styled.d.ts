@@ -7,6 +7,7 @@ declare module "styled-components" {
     text1: string
     text2: string
     textLink: string
+    postPreview: string
     title: {
       color1: string
       color2: string

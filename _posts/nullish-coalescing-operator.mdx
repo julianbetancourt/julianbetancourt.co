@@ -1,0 +1,84 @@
+---
+slug: "nullish-coalescing-operator"
+title: "Nullish coalescing operator in JavaSCript"
+date: "2020-12-11"
+author: "Julian Betancourt"
+description: _Save yourself your next bug and use the nullish coalesing operator_
+categories:
+  - "javascript"
+keywords:
+  - "javascript"
+---
+
+![https://images.unsplash.com/photo-1458419948946-19fb2cc296af?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80](https://images.unsplash.com/photo-1458419948946-19fb2cc296af?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80)
+
+Its name may already tell you what it does but don't go too fast because we, software developers, **are creatures of habit** and it's easy to be tricked by our minds on certain things.
+
+Back in October, after almost four years working for the same company I decided it was time to see how developers outside of my comfort zone worked. Don't get me wrong, my first company was a great great place to start my career, even during my last week there I felt empowered and perceived how I had a direct impact on the products they were working on. However, after being so long in one place you start to doubt about your own capabilities, even if your managers and co-workers tell you you're doing great, there's this voice of "would people outside this circle think the same of my work?", "would I be useful at all outside of this place?"; these were all questions that bombarded my head during my last months there.
+
+Even with all these doubts, I had this Latin-american voice telling me "you don't leave a job until you're fired" I mean, I had stability and good working conditions; why leaving just because of some random voice in my head?
+
+I started to look *more* in Linkedin Jobs seeing what would be a good fit for me. (I say "more" because yes, know it employers, we randomly look at the careers page of random startups and imagine ourselves being there until a slack message awaken us). After some research and interviewing I was able to land a good job at another massive company. I felt I'd made right choice, until my first day there.
+
+I saw something I'd never seen in a project before. That was the nullish operator `??` . I mean, after cloning a repo and opening it, it jumped at my eyes. "Was I working with another JavaScript before?", "Was I even doing JavaScript before?". These were all questions that I know Google was capable of answering. 
+
+Ok I understood it, our dear [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing_operator) had it very, veeeery clear:
+
+> **The nullish coalescing operator (??) is a logical operator that returns its right-hand side operand when its left-hand side operand is null or undefined, and otherwise returns its left-hand side operand.**
+
+> **This can be contrasted with the the logical OR (||) operator, which returns the right-hand side operand if the left operand is any falsy value, not only null or undefined. In other words, if you use || to provide some default value to another variable foo, you may encounter unexpected behaviors if you consider some falsy values as usable (e.g., '' or 0). See below for more examples.**
+
+You see, it was crystal clear and it made perfect sense looking at some parts of the code. The nullish coalescing operator (I hope to remember that "coalescing" jargon in my next interview) evaluates an expression in the left; if such expression is a data structure **different** than `null` or `undefined` then it will return it, if instead, it is `null` or `undefined` it will return the expression in the right hand. Check this:
+
+```jsx
+'Sum' ?? '41' // will return 'Sum'
+null ?? '41' // will return '41'
+```
+
+For any JavaScript developer that hasn't worked with or seen the nullish coalescing operator, this does makes sense, and can be easily comparable with the OR (||) operator, doesn't it?
+
+```jsx
+'Sum' || '41' // will return 'Sum'
+null || '41' // will return '41'
+```
+
+After all, they both *seem* to serve the same purpose. So JavaScript lords (aka [TC-39](https://tc39.es/)), why bother in creating *yet* another concept to an already confusing language?
+
+Precisely, the addition of the nullish coalescing operator attempts to give solution to a source of bugs since the invention of the language itself. Imagine you have made an API request an ended up with this:
+
+```jsx
+const getUser = () => fetch('/me')
+
+/* fetch('/me') will end up returning {
+  id: 1, 
+  active: false,
+  totalSpent: 0,
+}*/ 
+const user = await getUser()
+```
+
+and at a latter part of the system you want to use these *but* your lovely backend collague has told you that for some obscure implementation detail we can't guarantee the key `active` will be returned in every API response. What do you do then? Easy peasy, use the OR `||` operator, right?
+
+```jsx
+const isActive = user.active || true
+if (isActive) sellMySoul()
+```
+
+This is a mistake we've all made (am I the only one!?). By using `||` you coerced the value of `isActive` to `true` for ALL CASES! Wait what? Yes, you did! `user.active || true` means that EVEN if `active` exists as `false` it will be coerced to `true` simply because `false` is a falsy value!
+
+This is when our coalescing friend comes into play. See this
+
+```jsx
+const isActive = user.active ?? true
+if (isActive) sellMySoul()
+```
+
+`isActive` will sure evaluate to `false` because in fact `user.active` is neither `null` nor `undefined`
+
+To be fair, in my previous team we really liked the object wrapper `Boolean()` so for this particular scenario we could have done something like `Boolean(user.active)` and it would have accomplished the same results!
+
+There you have it! I hope you just gained a new weapon in your arsenal of JavaScript tools. If you liked this content, be sure to give me a follow on twitter:
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Friendly reminder: don&#39;t misuse the nullish operator in <a href="https://twitter.com/hashtag/JavaScript?src=hash&amp;ref_src=twsrc%5Etfw">#JavaScript</a>, it&#39;s easy to think you can replace it for all cases in which you would normally use the OR sign. Remember, the nullish operator just checks for `null` or `undefined`!<a href="https://t.co/UwSbkk2HM0">pic.twitter.com/UwSbkk2HM0</a></p>&mdash; Julian Betancourt (@juliian41) <a href="https://twitter.com/juliian41/status/1337419064273211397?ref_src=twsrc%5Etfw">December 11, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<!-- [https://twitter.com/juliian41/status/1337419064273211397?s=20](https://twitter.com/juliian41/status/1337419064273211397?s=20) -->

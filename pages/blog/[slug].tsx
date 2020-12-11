@@ -16,6 +16,10 @@ const Container = styled.div`
     width: 80%;
   }
 
+  img {
+    max-width: 100%;
+  }
+
   transition: all 0.3s ease-in-out;
   h1 {
     font-size: 2.3rem;

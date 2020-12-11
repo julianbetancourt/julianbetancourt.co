@@ -6,7 +6,7 @@ const Container = styled.div`
   display: flex;
   min-height: 120px;
   width: 437px;
-  background: #b3e5ff1a;
+  background: ${(p) => p.theme.postPreview};
   /* opacity: 0.5; */
   padding: 1rem;
   border-radius: 5px;
