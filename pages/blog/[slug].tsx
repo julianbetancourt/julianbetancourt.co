@@ -41,6 +41,7 @@ export default function Post({ post, morePosts, preview }) {
       <Head>
         <title>{post.title}</title>
         <meta property="og:title" content={post.title} />
+        <script async src="https://platform.twitter.com/widgets.js"></script>
       </Head>
       <Nav />
       <h1>{post.title}</h1>
