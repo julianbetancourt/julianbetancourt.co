@@ -81,7 +81,7 @@ export default function App({ Component, pageProps }) {
           name="description"
           content="Julian Betancourt's Blog. Focused on React and Javascript"
         />
-        <meta http-equiv="x-ua-compatible" content="ie=edge" />
+        <meta httpEquiv="x-ua-compatible" content="ie=edge" />
         <meta
           property="og:description"
           content="Julian Betancourt's Blog. Focused on React and Javascript"
