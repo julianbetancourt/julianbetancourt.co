@@ -1,0 +1,350 @@
+---
+slug: "higher-order-functions-by-example"
+title: "Understanding Higher order functions by building native Higuer order functions"
+date: "2020-04-08"
+author: "Julian Betancourt"
+description: _Understanding Higher order functions by building native Higuer order functions_
+categories:
+  - "javascript"
+keywords:
+  - "javascript"
+  - "functional programming"
+---
+
+One of the beauties of JavaScript is that functions are [first-class citizens](https://en.wikipedia.org/wiki/First-class_citizen). This means, functions
+are treated as values and hence can be assigned to variables, be returned from functions and even
+be used as other function's parameters.
+
+This alone unleashes a set of programming powers that you may have encountered, but are not fully aware of. For instance,
+if you are a React developer, you may be used to map through arrays to render something per each item. However,
+do you know _why_ you're doing it that way? If you are iterating through the array,
+why aren't you using, say `forEach`?.
+
+Before we go any further it is crucial we understand what higher order functions are. Simply put, higher order functions are functions that either:
+
+1. Take another function as a parameter.
+1. Return a function
+1. Or both
+
+"Why is this important?" You may ask yourself. Well in the first place, JavaScript has some
+handy **built-in** higher order functions; yes! you guessed it, `forEach` or `map` are well-known examples
+of built-in higher order functions. And just like native utilities, `npm` is full, full of packages that heavily use HOfs so it's useful
+to know that somehow your functions are being used by x library. Most importantly, understanding HOFs will
+bring many possibilities to your codebase, many tasks may need to be abstracted but also augmented somehow at a latter part of the
+program so HOFs can help you with that.
+
+> "I as a function, will receive a function from you, then I will call that function to (maybe) do something internally with it and at end (maybe) give you a new value"
+
+Now that we grasped an idea of what Higuer order functions are and why is it we can use them in JavaScript (because functions are first-class citizens!) let's dissect some of the built-in HOFs of the `Array` global object.
+
+## forEach
+
+`forEach` is basically the functional way to iterate through an array. While in other programming languages you may be forced to use `for` loops
+or even recursion exclusively as an iteration method; JavaScript gives us `forEach` as a way to iterate through an array. Let's see a typical implementation of it:
+
+```js
+const favoriteBands = [
+  "Sum 41",
+  "blink-182",
+  "A day to remember",
+  "Escape the fate",
+]
+
+favoriteBands.forEach((band, index) => {
+  // will console log each band starting with
+  //  0 as index. That is:
+  // 'Sum 41' 0
+  // 'blink-182' 1
+  // etc
+  console.log(band, index)
+})
+```
+
+How would you implement this "by hand"? Well, this one is so easy to understand that we basically saw it in the previous description: you use a `for`. Let's look at it:
+
+```js
+function customForEach(fn) {
+  for (let i = 0; i < this.length; i++) {
+    fn(this[i], i)
+  }
+}
+
+// Do not do this in your app!
+Array.prototype.customForEach = customForEach
+```
+
+Ok, hold on, something thing to note here. This is kind of a contrived example, in a real scenario you would not
+modify `prototype` under any circumstance! See a great explanation [here](https://stackoverflow.com/questions/21788187/javascript-better-way-to-modify-function-prototype).
+
+That being said, let's examine the code!:
+
+The first interesting thing is right in the start. You see that parameter `fn` ? Well, this `customForEach` function _**is**_ a
+higher order function, meaning it can accept a function as a parameter; we can't call it `function` as that is a reserved word in the
+language but other people may also name it `cb`, `callback` (for async scenarios), `predicate` or simply a description of what the function is, for example a `reducer` 😉.
+
+Now, `this` refers to the array the function is being called with, in our case `favoriteBands`. You see `this` being used
+in the `for` loop to know _when_ to stop the loop execution. Just like with `forEach` we need to limit the number of times the loop runs
+to the array.length - 1 (that's why we start the index `i` at 0).
+
+Next up, we _call_ the function we're being passed with some data, the current item in the loop execution and the current index; which is exactly what you
+use when you use `forEach` right ? `forEach((item, i) => {})`. So when you call `customForEach`
+
+```js
+favoriteBands.customForEach((band, index) => {
+  console.log(band, index)
+})
+```
+
+you MUST pass it a function as a parameter, and the function's form is defined by the HOF itself. To be honest, the chances of you
+writing your own `forEach` is minimal (if you wanted a different approach you would first reach `lodash`'s [forEach](https://lodash.com/docs/4.17.15#forEach) which actually
+beats the native `forEach` performance according to [this benchmark](https://www.measurethat.net/Benchmarks/Show/3470/0/lodash-foreach-vs-native-foreach)).
+
+See how this relates to the statement we discussed before?
+
+1. I as a function (`customForEach`)
+1. will receive a function from you `() => {}` (in this case it's an anoymous function but you might as well could have used a named function!)
+1. then I will call that function to (maybe) do something internally with it (call it per each array iteration) and at end (maybe) give you a new value (no value returned in our case!)
+
+## map
+
+Let's now look at a more interesting native HOF for arrays: `map`. `Array.prototype.map` lets you
+iterate through an array but also apply a function to each item so you can transform them somehow. An important thing is that
+`map` will **return** the new transformated array (we will come back to this later).
+
+Let's see how you would use it:
+
+```js
+const favoriteBands = [
+  { name: "Sum 41", placeOfOrigin: "Ajax, Canada", foundedYear: 1996 },
+  { name: "blink-182", placeOfOrigin: "CA, United States", foundedYear: 1992 },
+  {
+    name: "A day to remember",
+    placeOfOrigin: "FL, United States",
+    foundedYear: 2003,
+  },
+  {
+    name: "Escape the fate",
+    placeOfOrigin: "NV, United States",
+    foundedYear: 2004,
+  },
+]
+
+const favoriteBandsBio = favoriteBands.map(
+  (band, index) =>
+    `${band.name} was founded in ${band.placeOfOrigin} back in ${band.foundedYear}`
+)
+```
+
+What would happen then if you wrote `console.log(favoriteBandsBio)` ? What would get printed to the console? It would be
+
+```js
+;[
+  "Sum 41 was founded in Ajax, Canada back in 1996",
+  "blink-182 was founded in CA, United States back in 1992",
+  "A day to remember was founded in FL, United States back in 2003",
+  "Escape the fate was founded in NV, United States back in 2004",
+]
+```
+
+Why? Why were we able to to assign `favoriteBands.map` to another variable?. Remember that at the beginning of this section we mentioned something important:
+`map` will **return** a new array with the modified items. In our case, we were able to transform each item's content from literal objects
+to a simple string by using the object's properties and returning it. (if you are confused because you don't see the `return` word, check [this](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions#function_body)) `.map` does its thing,
+its returned value will get assigned to the variable `favoriteBandsBio`.
+
+How would you write your very own `map` then? Let's look at a possible approach:
+
+```js
+function customMap(fn) {
+  let newArr = []
+  this.forEach((item, index) => {
+    newArr[index] = fn(item, index)
+  })
+
+  return newArr
+}
+
+// Do not do this in your app!
+Array.prototype.customMap = customMap
+```
+
+A few things to discuss here. Notice how we are using `forEach` here instead of the `for` loop we were using for our implementation of `forEach`.
+Could we have used a `for` loop ? Yep. But why doing it the imperative way if we can just _declarate_ what we want? After all JS is a functional programming language
+and its usage makes perfect sense.
+
+Secondly, notice how we introduced a `newArr` variable. Remember, `map` must return a **new** array, it will not modify the original array whatsoever, so this
+`newArr` variable can help us build a new array and return it at the end of the function.
+
+Last, let's check at what we're doing in the iteration of the original array (referenced as `this`). We are doing an assignment operation via
+`newArr[index] = `. `forEach`'s `index` will start at `0` so it's a perfect combination to modify the `newArr` (you may also use `newArr.push()` for the same result).
+what are we assigning each item to? We are calling the `fn` in the arguments list, that function must **return** something so that we can use it in the `newArr`; very similar
+to the `const favoriteBandsBio = favoriteBands.map(` bit we discussed before, we can assign the return value of a function to a variable!
+
+After the `fn` has been called for each item and then pushed to the `newArr` we will be able to return the new value just like with the native `map`!
+
+## reduce
+
+As a final example, let's look at a more challenging task: recreate `Array.prototype.reduce` with our very own code. If you have not heard about `reduce` before this could
+blow your mind, it is a particularly hard HOF to understand, and if you use it wisely you can come up with very sophisticated use-cases.
+
+Let's see a graphic example (perhaps the most basic to understand `reduce`), and I will show you the result right away:
+
+```js
+const numbers = [1, 2, 3, 4]
+
+const newNumber = numbers.reduce((acc, curr) => acc + curr, 0)
+
+// will be equal to `10`
+console.log(newNumber)
+```
+
+`reduce` will iterate over an array, and **turn it into a new single value**; this value's type is up to you, it could be a number, literal object,
+another array or a string, it is really up to you. The HOF will do so by keeping track of a value for the entirety of the loop and then
+modifing that value with the return value of the function you are passing. (I know, thats a lot of "values"!). You see that `0` ? It's an optional
+parameter we give to `reduce` so that it can start the value calculation with a given initializer. Here, it will start suming the accumulator `acc` with the current
+item in the iteration `curr`, in the first iteration nothing has been `acc`umulated so with that `0`, `reduce` knows how to start the calculation. This is how it will look per
+iteration:
+
+<table>
+  <thead>
+    <tr>
+      <th>curr</th>
+      <th>acc</th>
+      <th>operation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>0</td>
+      <td>1 + 0 = 1</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>1</td>
+      <td>2 + 1 = 3</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>3</td>
+      <td>3 + 3 = 6</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>6</td>
+      <td>4 + 6 = 10</td>
+    </tr>
+  </tbody>
+</table>
+
+at the end it will return the last value returned from your operation. We are performing an operation here but we could also modify the accumulator
+in each iteration manually and then returning it to the next one. Consider the following:
+
+```js
+const testScores = ["A", "A+", "B", "C"]
+const students = ["Julian", "Camila", "Bryan", "Leticia"]
+const studentScores = testScores.reduce((acc, curr, index) => {
+  acc[students[index]] = curr
+  return acc
+}, {})
+
+// will be equal to
+// {Julian: "A", Camila: "A+", Bryan: "B", Leticia: "C"}
+console.log(studentScores)
+```
+
+See? Contrary to the previous example, here we are getting a brand new object from 2 separate arrays. `testScores` is being
+_reduced_ but in each iteration we are making use of an existing variable in the system (`students`). Notice that the starting point is
+an empty object literal; this way, in the first loop repetition we have `{}` for `acc`, so we mutate it by doing `acc[students[index]] = curr`
+and then pass it to the following iterations. Also note that if we console.logged `testScores` and `students` you would see that they both
+are intact. Let's see how we would build such thing ourselves:
+
+For this we need to:
+
+1. Receive a function as a parameter
+2. Receive an initializer value as second parameter
+
+```js
+function customReduce(fn, init) {}
+```
+
+3. Let's remember that the "magic" of `reduce` is simply that it can keep track of a given value during the iterations; that is,
+   an iteration `n` is able to know what the previous `acc` was. So for this, it occurs to me that we can create a variable inside the
+   function and assign it to that `init` value:
+
+```js
+function customReduce(fn, init) {
+  let acc = init
+}
+```
+
+4. Naturally, we have to iterate over the array. Let's use our beloved `forEach` and since we are going to put this in the Array's prototype we
+   will access it through `this` **Remember this is merely for explanatory purposes, in your codebase this is not recommended**
+
+```js
+function customReduce(fn, init) {
+  let acc = init
+
+  this.forEach((item, index) => {})
+}
+```
+
+5. ok so here comes the fun part, we now need to modify the accumulated value with the returned value of the function we are receiving once it is called, since we are
+   mimicking the API of `reduce` we will pass the arguments `(acc, curr, index)` in that order
+
+```js
+function customReduce(fn, init) {
+  let acc = init
+
+  this.forEach((item, index) => {
+    acc = fn(acc, item, index)
+  })
+}
+```
+
+6. Finally, after the loop is done, we just return the last `acc`umulated value and voilà! We have our very own reduce!
+
+```js
+function customReduce(fn, init) {
+  let acc = init
+
+  this.forEach((item, index) => {
+    acc = fn(acc, item, index)
+  })
+
+  return acc
+}
+
+// Do not do this in your app!
+Array.prototype.customReduce = customReduce
+```
+
+And there we have it! As you can see, building your own HOFs is not that hard! You just receive functions, use them somehow
+and **perhaps** return a new value. You remember how in the beginning of the article we mentioned how this would help us understand
+why react developers _love_ to `map` over arrays and convert them into UI items? Why don't they use `forEach` if all they are doing
+is iterating over an array! Well, if you've paid close attention, you will have noticed that `forEach` (just like our custom
+implementation) DOES NOT RETURN ANYTHING! so if you did this:
+
+```jsx
+return (
+  <div>
+    {favoriteBands.forEach(band => <div key={band.id}>{band.name}</div>))}
+  </div>
+)
+
+```
+
+then the expression between those `{}` will be nothing (aka `undefined`!) so after the iteration is done React will simply be unable to
+paint anything on the screen because...`undefined` is no JSX, is it? The following on the other hand _will_ return a set of JSX
+for each item!
+
+```jsx
+return (
+  <div>
+    {favoriteBands.map(band => <div key={band.id}>{band.name}</div>))}
+  </div>
+)
+
+```
+
+That is all 😀 I hope you grasped a better idea of what HOFs are, that you realize you've been using them perhaps even without being aware and how you can
+write your very own in your next task!
