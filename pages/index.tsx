@@ -332,7 +332,7 @@ export default function Home({ allPosts }) {
             <h2>Fullstack JavaScript Developer</h2>
             <p>
               I'm an Amsterdam-based <span></span>Software Engineer with more
-              than 4 years of pressional experience specializing in React,
+              than 4 years of professional experience specializing in React,
               TypeScript and Node. I currently work for{" "}
               <a href="https://messagebird.com" target="_blank">
                 Messagebird
