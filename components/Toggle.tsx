@@ -11,7 +11,7 @@ by Mauricio Allende (https://mallendeo.com/)
  */
   position: absolute;
   top: 40px;
-  right: 40px; /* margin-top: auto; */
+  right: 40px;
   opacity: 0.5;
   transition: all 0.3s ease-in-out;
 

@@ -1,16 +1,13 @@
 import Link from "next/link"
 import styled from "styled-components"
-import markdownToHtml from "../lib/markdownToHtml"
 
 const Container = styled.div`
   display: flex;
   min-height: 120px;
   width: 437px;
   background: ${(p) => p.theme.postPreview};
-  /* opacity: 0.5; */
   padding: 1rem;
   border-radius: 5px;
-  /* border: 1px solid; */
 `
 
 const Content = styled.div``
@@ -38,8 +35,6 @@ const Title = styled.div`
 `
 
 function PostPreview({ post }) {
-  // const description = markdownToHtml(post.description)
-  // ({ post, description })
   return (
     <Container>
       <Content>
@@ -51,11 +46,7 @@ function PostPreview({ post }) {
           </h3>
           <span className="category">{post.categories[0]}</span>
         </Title>
-        <div
-          // className={markdownStyles['markdown']}
-          dangerouslySetInnerHTML={{ __html: post.description }}
-        />
-        {/* {description} */}
+        <div dangerouslySetInnerHTML={{ __html: post.description }} />
       </Content>
     </Container>
   )

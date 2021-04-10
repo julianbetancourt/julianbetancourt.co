@@ -1,5 +1,5 @@
 import Head from "next/head"
-import styled from "styled-components"
+import styled, { css } from "styled-components"
 import {
   IoMdMail,
   IoLogoLinkedin,
@@ -7,308 +7,23 @@ import {
   IoLogoGithub,
 } from "react-icons/io"
 import Link from "next/link"
-import Image from "next/image"
+import Image, { ImageProps } from "next/image"
 import { getAllPosts } from "../lib/api"
 import PostPreview from "../components/PostPreview"
 import markdownToHtml from "../lib/markdownToHtml"
-
-const Container = styled.div`
-  height: 100vh;
-  /* max-width: 100%; */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease-in-out;
-`
-
-const Card = styled.div`
-  .photo {
-    width: 320px;
-    height: 320px;
-    transform: scale(1.2);
-    border-radius: 10px;
-    img {
-      border-radius: 10px;
-    }
-  }
-  width: 1096px;
-  max-width: 1096px;
-  margin-bottom: auto;
-  margin-top: 50px;
-  & > .bio {
-    padding: 80px;
-    display: flex;
-    border-radius: 15px;
-    position: relative;
-
-    & > :nth-child(3) > :nth-child(1) {
-      border-radius: 10px;
-    }
-  }
-
-  & > .posts {
-    padding: 0 80px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    & > div {
-      margin-bottom: 20px;
-      /* margin-right: 64px; */
-      /* margin-right: 20px; */
-    }
-
-    /* & */
-  }
-
-  @media (max-width: 1127px) {
-    flex-direction: column-reverse;
-    padding: 0px;
-    max-width: 600px;
-  }
-
-  @media (max-width: 685px) {
-    max-width: 100%;
-    .border {
-      display: none;
-    }
-  }
-
-  @media (max-width: 485px) {
-    & > .bio,
-    & > .posts {
-      padding: 20px;
-    }
-  }
-
-  .border {
-    &::before,
-    &::after {
-      background: ${(p) => p.theme.border};
-    }
-  }
-
-  .top-left {
-    &::before {
-      content: "";
-      top: 0px;
-      left: 0px;
-      display: block;
-      position: absolute;
-      height: 50px;
-      width: 5px;
-    }
-
-    &::after {
-      content: "";
-      top: 0px;
-      left: 0px;
-      display: block;
-      position: absolute;
-      height: 5px;
-      width: 50px;
-    }
-  }
-
-  .bottom-right {
-    &::before {
-      content: "";
-      bottom: 0px;
-      right: 0px;
-      display: block;
-      position: absolute;
-      height: 50px;
-      width: 5px;
-    }
-
-    &::after {
-      content: "";
-      bottom: 0px;
-      right: 0px;
-      display: block;
-      position: absolute;
-      height: 5px;
-      width: 50px;
-    }
-  }
-
-  .top-right {
-    &::before {
-      content: "";
-      top: 0px;
-      right: 0px;
-      display: block;
-      position: absolute;
-      height: 50px;
-      width: 5px;
-    }
-
-    &::after {
-      content: "";
-      top: 0px;
-      right: 0px;
-      display: block;
-      position: absolute;
-      height: 5px;
-      width: 50px;
-    }
-  }
-
-  .bottom-left {
-    &::before {
-      content: "";
-      bottom: 0px;
-      left: 0px;
-      display: block;
-      position: absolute;
-      height: 50px;
-      width: 5px;
-    }
-
-    &::after {
-      content: "";
-      bottom: 0px;
-      left: 0px;
-      display: block;
-      position: absolute;
-      height: 5px;
-      width: 50px;
-    }
-  }
-`
-
-const Photo = styled.div`
-  width: 320px;
-  height: 320px;
-  border-radius: 10px;
-  margin-right: 80px;
-  background: url("/img.jpg") no-repeat;
-  background-position: center;
-  background-size: 120%;
-  align-self: center;
-
-  @media (max-width: 1127px) {
-    display: none;
-    margin-right: 0;
-    margin: 0 auto;
-    width: 200px;
-    height: 200px;
-  }
-`
-
-const Title = styled.div`
-  display: flex;
-  max-width: 390px;
-  flex-direction: column;
-  margin-right: 80px;
-  margin-top: auto;
-  width: auto;
-  h1 {
-    margin-top: 0;
-  }
-  p {
-    margin-top: 20px;
-    font-size: 1rem;
-    line-height: 1.6;
-    color: ${(p) => p.theme.text1};
-  }
-  @media (max-width: 1127px) {
-    margin-right: 0;
-    margin: 0 auto;
-    h1,
-    h2 {
-      text-align: center;
-    }
-
-    h1:nth-child(1) {
-      opacity: 0;
-    }
-  }
-
-  @media (max-width: 485px) {
-    /* margin-bottom: 300px; */
-    margin-left: 20px;
-    margin-right: 20px;
-    /* text-align: center; */
-    .name {
-      /* display: flex; */
-      margin: 0 auto;
-    }
-    h1 {
-      top: 0px;
-      left: 0px;
-      /* color: ${(p) => p.theme.title.color1}; */
-      display: block;
-      font-size: 2rem !important;
-      /* position: relative; */
-    }
-
-    h1:nth-child(2) {
-      top: 0;
-      left: 3px !important;
-      /* color: ${(p) => p.theme.title.color2}; */
-      position: absolute;
-    }
-
-    h1:nth-child(3) {
-      top: 3px !important;
-      left: 0px;
-      /* color: ${(p) => p.theme.title.color3}; */
-      position: absolute;
-    }
-
-    h1:nth-child(4) {
-      top: -3px !important;
-      left: 0px;
-      /* color: ${(p) => p.theme.title.color4}; */
-      position: absolute;
-    }
-  }
-
-  .name {
-    position: relative;
-    h1 {
-      top: 0px;
-      left: 0px;
-      color: ${(p) => p.theme.title.color1};
-      display: block;
-      font-size: 4rem;
-      position: relative;
-    }
-
-    h1:nth-child(2) {
-      top: 0;
-      left: 5px;
-      color: ${(p) => p.theme.title.color2};
-      position: absolute;
-    }
-
-    h1:nth-child(3) {
-      top: 5px;
-      left: 0px;
-      color: ${(p) => p.theme.title.color3};
-      position: absolute;
-    }
-
-    h1:nth-child(4) {
-      top: -5px;
-      left: 0px;
-      color: ${(p) => p.theme.title.color4};
-      position: absolute;
-    }
-  }
-
-  h2 {
-    color: ${(p) => p.theme.text1};
-    margin: 0;
-  }
-`
-
-const Menu = styled.div`
-  & > a {
-    color: ${(p) => p.theme.text1};
-    margin-right: 10px;
-  }
-`
+import {
+  Container,
+  Bio,
+  BioBorders,
+  BioCard,
+  BioDescription,
+  Card,
+  Name,
+  PhotoContainer,
+  Posts,
+  SemiTitle,
+  SocialMedia,
+} from "../styles"
 
 export default function Home({ allPosts }) {
   return (
@@ -318,18 +33,10 @@ export default function Home({ allPosts }) {
         <title>Julian Betancourt | Home</title>
       </Head>
       <Card>
-        <div className="bio">
-          <div className="border top-left"></div>
-          <div className="border top-right"></div>
-          <div
-            style={{
-              width: 320,
-              height: 320,
-              marginRight: 80,
-              alignSelf: "center",
-              borderRadius: "10px",
-            }}
-          >
+        <BioCard>
+          <BioBorders type="top-left" />
+          <BioBorders type="top-right" />
+          <PhotoContainer>
             <Image
               className="photo"
               src="/img.jpg"
@@ -338,28 +45,20 @@ export default function Home({ allPosts }) {
               width="100%"
               height="100%"
             />
-          </div>
-          <Title>
-            <div className="name">
-              <h1>
-                Julian <br />
-                Betancourt
-              </h1>
-              <h1>
-                Julian <br />
-                Betancourt
-              </h1>
-              <h1>
-                Julian <br />
-                Betancourt
-              </h1>
-              <h1>
-                Julian <br />
-                Betancourt
-              </h1>
-            </div>
-            <h2>Fullstack JavaScript Developer</h2>
-            <p>
+          </PhotoContainer>
+          <Bio>
+            <Name>
+              {Array(4)
+                .fill(null)
+                .map((_, index) => (
+                  <h1 key={index}>
+                    Julian <br />
+                    Betancourt
+                  </h1>
+                ))}
+            </Name>
+            <SemiTitle>Fullstack JavaScript Developer</SemiTitle>
+            <BioDescription>
               I'm an Amsterdam-based <span></span>Software Engineer with more
               than 4 years of professional experience specializing in React,
               TypeScript and Node. I currently work for{" "}
@@ -372,8 +71,8 @@ export default function Home({ allPosts }) {
                 Quiqup
               </a>{" "}
               writing all things JS.
-            </p>
-            <Menu>
+            </BioDescription>
+            <SocialMedia>
               <a href="mailto:julianbetancourt10@gmail.com">
                 <IoMdMail />
               </a>
@@ -386,15 +85,14 @@ export default function Home({ allPosts }) {
               <a href="https://github.com/julianbetancourt/">
                 <IoLogoGithub />
               </a>
-              {/* <Link href="/blog">Contact</Link> */}
-            </Menu>
-          </Title>
-        </div>
-        <div className="posts">
+            </SocialMedia>
+          </Bio>
+        </BioCard>
+        <Posts>
           {allPosts.map((post) => {
             return <PostPreview key={post.slug} post={post} />
           })}
-        </div>
+        </Posts>
       </Card>
     </Container>
   )

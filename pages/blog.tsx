@@ -8,12 +8,7 @@ const Container = styled.div`
   height: 100vh;
   max-width: 920px;
   margin: 50px auto 0;
-  /* display: flex;
-  disp
-  align-items: center;
-  justify-content: center; */
   transition: all 0.3s ease-in-out;
-  /* background: pink; */
   h1 {
     font-size: 2.3rem;
     color: ${(p) => p.theme.text2};
@@ -21,7 +16,6 @@ const Container = styled.div`
 `
 
 export default function Blog({ allPosts }) {
-  ;({ allPosts })
   return (
     <Container>
       <Nav />
