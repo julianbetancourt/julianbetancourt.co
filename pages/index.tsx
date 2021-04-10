@@ -7,6 +7,7 @@ import {
   IoLogoGithub,
 } from "react-icons/io"
 import Link from "next/link"
+import Image from "next/image"
 import { getAllPosts } from "../lib/api"
 import PostPreview from "../components/PostPreview"
 import markdownToHtml from "../lib/markdownToHtml"
@@ -21,6 +22,15 @@ const Container = styled.div`
 `
 
 const Card = styled.div`
+  .photo {
+    width: 320px;
+    height: 320px;
+    transform: scale(1.2);
+    border-radius: 10px;
+    img {
+      border-radius: 10px;
+    }
+  }
   width: 1096px;
   max-width: 1096px;
   margin-bottom: auto;
@@ -30,6 +40,10 @@ const Card = styled.div`
     display: flex;
     border-radius: 15px;
     position: relative;
+
+    & > :nth-child(3) > :nth-child(1) {
+      border-radius: 10px;
+    }
   }
 
   & > .posts {
@@ -297,8 +311,6 @@ const Menu = styled.div`
 `
 
 export default function Home({ allPosts }) {
-  ;({ allPosts })
-
   return (
     <Container>
       <Head>
@@ -309,7 +321,24 @@ export default function Home({ allPosts }) {
         <div className="bio">
           <div className="border top-left"></div>
           <div className="border top-right"></div>
-          <Photo></Photo>
+          <div
+            style={{
+              width: 320,
+              height: 320,
+              marginRight: 80,
+              alignSelf: "center",
+              borderRadius: "10px",
+            }}
+          >
+            <Image
+              className="photo"
+              src="/img.jpg"
+              layout="responsive"
+              objectFit="cover"
+              width="100%"
+              height="100%"
+            />
+          </div>
           <Title>
             <div className="name">
               <h1>
