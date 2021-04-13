@@ -39,7 +39,7 @@ export default function Home({ allPosts }) {
           <PhotoContainer>
             <Image
               className="photo"
-              src="/img.jpg"
+              src="/img.png"
               layout="responsive"
               objectFit="cover"
               width="100%"
