@@ -39,11 +39,12 @@ export default function Home({ allPosts }) {
           <PhotoContainer>
             <Image
               className="photo"
-              src="/img.png"
+              src="/img.jpeg"
               layout="responsive"
               objectFit="cover"
               width="100%"
               height="100%"
+              onDragStart={() => false}
             />
           </PhotoContainer>
           <Bio>
@@ -76,13 +77,13 @@ export default function Home({ allPosts }) {
               <a href="mailto:julianbetancourt10@gmail.com">
                 <IoMdMail />
               </a>
-              <a href="https://www.linkedin.com/in/julian-betancourt/">
+              <a href="https://tinyurl.com/ynya4yhs">
                 <IoLogoLinkedin />
               </a>
-              <a href="https://twitter.com/juliian41">
+              <a href="https://tinyurl.com/ynya4yhs">
                 <IoLogoTwitter />
               </a>
-              <a href="https://github.com/julianbetancourt/">
+              <a href="https://tinyurl.com/ne8vtbe">
                 <IoLogoGithub />
               </a>
             </SocialMedia>

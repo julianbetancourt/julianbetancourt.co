@@ -143,7 +143,7 @@ export const PhotoContainer = styled.div`
     transform: scale(1.2);
     border-radius: 10px;
     img {
-      border-radius: 10px;
+      pointer-events: none;
     }
   }
 
