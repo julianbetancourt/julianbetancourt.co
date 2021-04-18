@@ -1,5 +1,7 @@
 import Head from "next/head"
 import React from "react"
+import { useRouter } from "next/router"
+import { IoLogoTwitter } from "react-icons/io"
 import styled from "styled-components"
 import Nav from "../../components/Nav"
 import { getAllPosts, getPostBySlug } from "../../lib/api"
@@ -42,12 +44,45 @@ const Container = styled.div`
   }
 `
 
+const Hr = styled.hr`
+  background-color: ${(p) => p.theme.text1};
+  border: 0;
+  height: 1px;
+  width: 80%;
+  margin-right: 100%;
+  display: block;
+  @media (max-width: 960px) {
+    margin-left: 20px;
+  }
+`
+
+const Share = styled.div`
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  span {
+    margin-right: 10px;
+  }
+  @media (max-width: 960px) {
+    margin-left: 20px;
+  }
+`
+
 export default function Post({ post, morePosts, preview }) {
+  const router = useRouter()
+  console.log({ post, preview })
   return (
     <Container>
       <Head>
         <title>{post.title}</title>
         <meta property="og:title" content={post.title} />
+        <meta
+          name="twitter:image"
+          content="https://images.unsplash.com/photo-1566837945700-30057527ade0?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80"
+        />
+        <meta name="twitter:creator" content="@juliian41" />
+        <meta name="twitter:title" content={post.title} />
+        <meta name="twitter:description" content={post.description} />
         <script async src="https://platform.twitter.com/widgets.js"></script>
       </Head>
       <Nav />
@@ -56,6 +91,17 @@ export default function Post({ post, morePosts, preview }) {
         className="mdx-block"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
+      <Hr />
+      <Share>
+        <span>Share on</span>
+        <a
+          href={`https://twitter.com/intent/tweet?url=https://julianbetancourt.co/blog/${post.slug}&text=${post.title}&via=juliian41`}
+          aria-label="Share article on twitter"
+          target="_blank"
+        >
+          <IoLogoTwitter />
+        </a>
+      </Share>
     </Container>
   )
 }
@@ -68,6 +114,7 @@ export async function getStaticProps({ params }) {
     props: {
       post: {
         ...post,
+        slug: params.slug,
         content,
         description,
       },

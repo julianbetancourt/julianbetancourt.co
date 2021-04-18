@@ -1,13 +1,11 @@
 import Head from "next/head"
-import styled, { css } from "styled-components"
 import {
   IoMdMail,
   IoLogoLinkedin,
   IoLogoTwitter,
   IoLogoGithub,
 } from "react-icons/io"
-import Link from "next/link"
-import Image, { ImageProps } from "next/image"
+import Image from "next/image"
 import { getAllPosts } from "../lib/api"
 import PostPreview from "../components/PostPreview"
 import markdownToHtml from "../lib/markdownToHtml"
@@ -29,7 +27,6 @@ export default function Home({ allPosts }) {
   return (
     <Container>
       <Head>
-        <link href="https://css.gg/mail.css" rel="stylesheet" />
         <title>Julian Betancourt | Home</title>
       </Head>
       <Card>
@@ -74,16 +71,28 @@ export default function Home({ allPosts }) {
               writing all things JS.
             </BioDescription>
             <SocialMedia>
-              <a href="mailto:julianbetancourt10@gmail.com">
+              <a
+                href="mailto:julianbetancourt10@gmail.com"
+                aria-label="Email me"
+              >
                 <IoMdMail />
               </a>
-              <a href="https://tinyurl.com/ynya4yhs">
+              <a
+                href="https://tinyurl.com/ynya4yhs"
+                aria-label="Visit my LinkedIn"
+              >
                 <IoLogoLinkedin />
               </a>
-              <a href="https://tinyurl.com/ynya4yhs">
+              <a
+                href="https://tinyurl.com/ynya4yhs"
+                aria-label="Visit my Twitter"
+              >
                 <IoLogoTwitter />
               </a>
-              <a href="https://tinyurl.com/ne8vtbe">
+              <a
+                href="https://tinyurl.com/ne8vtbe"
+                aria-label="Visit my Github"
+              >
                 <IoLogoGithub />
               </a>
             </SocialMedia>

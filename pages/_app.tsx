@@ -1,4 +1,7 @@
 import "./prism-theme.css"
+import "@fontsource/poppins"
+import "@fontsource/poppins/300.css"
+import "@fontsource/poppins/500.css"
 import Head from "next/head"
 import { useState, useEffect } from "react"
 import { createGlobalStyle, ThemeProvider } from "styled-components"
@@ -88,11 +91,6 @@ export default function App({ Component, pageProps }) {
         />
         <meta property="og:type" content="website" />
 
-        <link rel="preconnect" href="https://fonts.gstatic.com" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap"
-          rel="stylesheet"
-        />
         <script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-3GKQZHTHLQ"
