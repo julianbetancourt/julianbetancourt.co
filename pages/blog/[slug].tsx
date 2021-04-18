@@ -28,9 +28,16 @@ const Container = styled.div`
 
   @media (max-width: 960px) {
     max-width: 100%none;
-    padding: 0 40px;
     .mdx-block {
       width: 100%;
+    }
+
+    p,
+    h1,
+    h2,
+    table {
+      margin-left: 20px;
+      margin-right: 20px;
     }
   }
 `
