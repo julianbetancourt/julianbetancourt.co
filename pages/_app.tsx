@@ -9,6 +9,7 @@ import { Normalize } from "styled-normalize"
 
 import { Toggle } from "../components/Toggle"
 import { darkTheme, lightTheme } from "../theme"
+import { useRouter } from "next/router"
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -37,6 +38,8 @@ const GlobalStyle = createGlobalStyle`
 
 export default function App({ Component, pageProps }) {
   const [currentTheme, setCurrentTheme] = useState(null)
+  const router = useRouter()
+
   const themeToggler = () => {
     currentTheme === "light"
       ? setCurrentTheme("dark")
@@ -111,7 +114,7 @@ export default function App({ Component, pageProps }) {
       <ThemeProvider theme={currentTheme === "light" ? lightTheme : darkTheme}>
         <Component {...pageProps} />
         <GlobalStyle />
-        {currentTheme && (
+        {currentTheme && router.pathname !== "/cv" && (
           <Toggle
             className="toggle"
             onClick={() => {
