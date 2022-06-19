@@ -57,18 +57,13 @@ export default function Home({ allPosts }) {
             </Name>
             <SemiTitle>Fullstack JavaScript Developer</SemiTitle>
             <BioDescription>
-              I'm an Amsterdam-based <span></span>Software Engineer with more
-              than 4 years of professional experience specializing in React,
-              TypeScript and Node. I currently work for{" "}
-              <a href="https://messagebird.com" target="_blank">
-                Messagebird
+              I'm an Europe-based <span></span>Software Engineer with more
+              than 5 years of professional experience specializing in React,
+              TypeScript and Node.js. I currently work for{" "}
+              <a href="https://twilio.com" target="_blank">
+                Twilio
               </a>{" "}
-              as a Frontend Engineer. In the past I also worked for the
-              Dubai-based startup{" "}
-              <a href="https://quiqup.com" target="_blank">
-                Quiqup
-              </a>{" "}
-              writing all things JS.
+              as a Senior Software Engineer.
             </BioDescription>
             <SocialMedia>
               <a
